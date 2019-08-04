@@ -1,5 +1,6 @@
 package com.example.cameratutorial;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,10 +25,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         staticLoadsdk();
         Button processBtn = findViewById(R.id.button);
+        Button goCameraDemoBtn = findViewById(R.id.camera_btn);
         processBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 convert2Gray();
+            }
+        });
+
+        goCameraDemoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this,CameraViewActivity.class);
+                startActivity(intent);
             }
         });
 
