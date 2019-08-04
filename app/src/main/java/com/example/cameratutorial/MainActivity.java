@@ -1,9 +1,14 @@
 package com.example.cameratutorial;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,10 +24,13 @@ import org.opencv.imgproc.Imgproc;
 public class MainActivity extends AppCompatActivity {
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         staticLoadsdk();
         Button processBtn = findViewById(R.id.button);
         Button goCameraDemoBtn = findViewById(R.id.camera_btn);
@@ -47,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private void staticLoadsdk() {
         boolean load = OpenCVLoader.initDebug();
         if (load) {
-            Log.i("testCV", "openCV is Successed!");
+            Log.i("testCV", "OpenCV loaded successfully!");
         }
     }
 
@@ -79,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+
 
 
 }

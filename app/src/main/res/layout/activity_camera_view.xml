@@ -11,11 +11,12 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
 
-    <org.opencv.android.JavaCameraView
+    <org.opencv.android.JavaCamera2View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/cv_camera"
         android:visibility = "gone"
+        opencv:show_fps="true"
         />
 
 </RelativeLayout>

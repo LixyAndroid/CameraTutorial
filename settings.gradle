@@ -1,1 +1,2 @@
-include ':app', ':sdk'
+include ':app'
+include ':openCVLibrary347'
