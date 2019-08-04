@@ -16,6 +16,8 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCamera2View;
 import org.opencv.core.Mat;
 
+import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
+
 public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnClickListener {
 
     private JavaCamera2View mCamera2View;
@@ -38,7 +40,11 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
 
         mCamera2View = findViewById(R.id.cv_camera);
+        //setup frame listener
+        mCamera2View.setCvCameraViewListener(this);
+
         mCamera2View.setVisibility(SurfaceView.VISIBLE);
+
         mCamera2View.enableView();
 
         RadioButton backOption = findViewById(R.id.backCameraOption);
@@ -66,6 +72,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         return inputFrame.rgba();
+//        Mat frame = inputFrame.rgba();
+//        if (this.getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+//            Core.rotate(frame,frame,Core.ROTATE_90_CLOCKWISE);
+//        }
+//
+//        return  frame;
+
     }
 
     @Override
@@ -115,7 +128,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.frontCameraOption) {
-            cameraIndex = CameraBridgeViewBase.CAMERA_ID_FRONT;
+            cameraIndex = CAMERA_ID_FRONT;
         } else if (id == R.id.backCameraOption) {
             cameraIndex = CameraBridgeViewBase.CAMERA_ID_BACK;
         }
