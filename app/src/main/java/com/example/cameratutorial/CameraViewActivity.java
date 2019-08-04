@@ -8,16 +8,19 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.RadioButton;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCamera2View;
-import org.opencv.android.JavaCameraView;
 import org.opencv.core.Mat;
 
-public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnClickListener {
+
     private JavaCamera2View mCamera2View;
 
+    private int cameraIndex = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -36,8 +39,15 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         mCamera2View = findViewById(R.id.cv_camera);
         mCamera2View.setVisibility(SurfaceView.VISIBLE);
-        mCamera2View.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
         mCamera2View.enableView();
+
+        RadioButton backOption = findViewById(R.id.backCameraOption);
+        RadioButton frontOption = findViewById(R.id.frontCameraOption);
+
+        backOption.setOnClickListener(this);
+        frontOption.setOnClickListener(this);
+        //默认选择后置摄像头
+        backOption.setSelected(true);
 
 
     }
@@ -58,6 +68,31 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         return inputFrame.rgba();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mCamera2View != null) {
+            mCamera2View.disableView();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mCamera2View != null) {
+            mCamera2View.disableView();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mCamera2View != null) {
+            mCamera2View.setCameraIndex(cameraIndex);
+            mCamera2View.enableView();
+        }
+
+    }
 
     /**
      * 请求权限
@@ -76,4 +111,20 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     }
 
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.frontCameraOption) {
+            cameraIndex = CameraBridgeViewBase.CAMERA_ID_FRONT;
+        } else if (id == R.id.backCameraOption) {
+            cameraIndex = CameraBridgeViewBase.CAMERA_ID_BACK;
+        }
+
+        mCamera2View.setCameraIndex(cameraIndex);
+        if (mCamera2View != null) {
+            mCamera2View.disableView();
+        }
+
+        mCamera2View.enableView();
+    }
 }
