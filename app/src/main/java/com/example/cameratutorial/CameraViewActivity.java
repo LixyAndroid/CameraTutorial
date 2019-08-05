@@ -1,6 +1,7 @@
 package com.example.cameratutorial;
 
 import android.Manifest;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,14 +14,15 @@ import android.view.WindowManager;
 import android.widget.RadioButton;
 
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCamera2View;
+import org.opencv.android.JavaCameraView;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
 public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnClickListener {
 
-    private JavaCamera2View mCamera2View;
+    private JavaCameraView mCameraView;
 
     private int cameraIndex = 0;
 
@@ -39,13 +41,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-        mCamera2View = findViewById(R.id.cv_camera);
+        mCameraView = findViewById(R.id.cv_camera);
         //setup frame listener
-        mCamera2View.setCvCameraViewListener(this);
+        mCameraView.setCvCameraViewListener(this);
 
-        mCamera2View.setVisibility(SurfaceView.VISIBLE);
+        mCameraView.setVisibility(SurfaceView.VISIBLE);
 
-        mCamera2View.enableView();
+        mCameraView.enableView();
 
         RadioButton backOption = findViewById(R.id.backCameraOption);
         RadioButton frontOption = findViewById(R.id.frontCameraOption);
@@ -72,37 +74,30 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         return inputFrame.rgba();
-//        Mat frame = inputFrame.rgba();
-//        if (this.getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
-//            Core.rotate(frame,frame,Core.ROTATE_90_CLOCKWISE);
-//        }
-//
-//        return  frame;
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCamera2View != null) {
-            mCamera2View.disableView();
+        if (mCameraView != null) {
+            mCameraView.disableView();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mCamera2View != null) {
-            mCamera2View.disableView();
+        if (mCameraView != null) {
+            mCameraView.disableView();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mCamera2View != null) {
-            mCamera2View.setCameraIndex(cameraIndex);
-            mCamera2View.enableView();
+        if (mCameraView != null) {
+            mCameraView.setCameraIndex(cameraIndex);
+            mCameraView.enableView();
         }
 
     }
@@ -133,11 +128,11 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             cameraIndex = CameraBridgeViewBase.CAMERA_ID_BACK;
         }
 
-        mCamera2View.setCameraIndex(cameraIndex);
-        if (mCamera2View != null) {
-            mCamera2View.disableView();
+        mCameraView.setCameraIndex(cameraIndex);
+        if (mCameraView != null) {
+            mCameraView.disableView();
         }
 
-        mCamera2View.enableView();
+        mCameraView.enableView();
     }
 }
