@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -115,11 +116,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat frame = inputFrame.rgba();
-
-
-
         process(frame);
-
         return frame;
     }
 
@@ -210,6 +207,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.frontCameraOption) {
+            Toast.makeText(getApplicationContext(), "推荐您使用横屏检测", Toast.LENGTH_SHORT).show();
             cameraIndex = CAMERA_ID_FRONT;
         } else if (id == R.id.backCameraOption) {
             cameraIndex = CameraBridgeViewBase.CAMERA_ID_BACK;
