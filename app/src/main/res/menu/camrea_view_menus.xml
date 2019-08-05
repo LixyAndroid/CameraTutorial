@@ -4,4 +4,6 @@
     <item android:id="@+id/edge" android:title="@string/edge"></item>
     <item android:id="@+id/sobel" android:title="@string/sobel"></item>
     <item android:id="@+id/boxblur" android:title="@string/boxblur"></item>
+
+    <item android:id="@+id/face_detection" android:title="@string/faceDetection"></item>
 </menu>

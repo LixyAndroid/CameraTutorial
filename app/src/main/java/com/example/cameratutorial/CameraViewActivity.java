@@ -1,6 +1,7 @@
 package com.example.cameratutorial;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
 public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnClickListener {
@@ -32,38 +38,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private int cameraIndex = 0;
 
     int option = 0;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        return super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.camrea_view_menus, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // return super.onOptionsItemSelected(item);
-
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.invert:
-                option = 1;
-                break;
-            case R.id.edge:
-                option = 2;
-                break;
-            case R.id.sobel:
-                option = 3;
-                break;
-            case R.id.boxblur:
-                option = 4;
-                break;
-            default:
-                option = 0;
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -100,6 +74,73 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         backOption.setSelected(true);
 
 
+        try {
+            initFaceDetectorData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void initFaceDetectorData() throws IOException {
+        System.loadLibrary("face_detection");
+        //样本多，检测条件更苛刻
+        InputStream input = getResources().openRawResource(R.raw.haarcascade_frontalface_alt_tree);
+        //更宽松，但是也造成准确率问题
+        //InputStream input = getResources().openRawResource(R.raw.lbpcascade_frontalface);
+        File cascadeDir = this.getDir("cascade", Context.MODE_PRIVATE);
+        File file = new File(cascadeDir.getAbsolutePath() + "haarcascade_frontalface_alt_tree.xml");
+        //File file = new File(cascadeDir.getAbsolutePath() + "lbpcascade_frontalface.xml");
+        FileOutputStream out = new FileOutputStream(file);
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while ((len = input.read(buff)) != -1) {
+            out.write(buff, 0, len);
+        }
+
+        input.close();
+        out.close();
+
+        initLoad(file.getAbsolutePath());
+        file.delete();
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.camrea_view_menus, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // return super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.invert:
+                option = 1;
+                break;
+            case R.id.edge:
+                option = 2;
+                break;
+            case R.id.sobel:
+                option = 3;
+                break;
+            case R.id.boxblur:
+                option = 4;
+                break;
+            case R.id.face_detection:
+                option = 5;
+                break;
+            default:
+                option = 0;
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -116,6 +157,11 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat frame = inputFrame.rgba();
+        //完美解决摄像头角度问题
+        if (cameraIndex == CAMERA_ID_FRONT){//前置摄像头
+            Core.flip(frame,frame,1);
+
+        }
         process(frame);
         return frame;
     }
@@ -153,6 +199,10 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             temp.copyTo(frame);
             //不要忘记释放资源
             temp.release();
+
+        } else if (option == 5) {
+
+            faceDetect(frame.getNativeObjAddr());
 
         } else {
             //do nothing
@@ -220,4 +270,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         mCameraView.enableView();
     }
+
+
+    public native void initLoad(String haarFilePath);
+
+    public native void faceDetect(long address);
 }

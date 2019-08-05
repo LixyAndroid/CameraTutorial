@@ -4,4 +4,5 @@
     <string name="edge">边缘</string>
     <string name="sobel">梯度</string>
     <string name="boxblur">模糊</string>
+    <string name="faceDetection">人脸检测</string>
 </resources>

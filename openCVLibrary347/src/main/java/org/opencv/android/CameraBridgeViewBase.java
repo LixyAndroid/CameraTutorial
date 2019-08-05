@@ -416,12 +416,6 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
                 bmpValid = false;
 
-//                if (mCacheBitmap != null){
-//                    mCacheBitmap.recycle();
-//                    mCacheBitmap =Bitmap.createBitmap(modified.width(),modified.height(),Bitmap.Config.ARGB_8888);
-//                }
-
-
             }
         }
 
@@ -430,6 +424,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
 
+                //尊重源代码
 //                if (BuildConfig.DEBUG)
 //                    Log.d(TAG, "mStretch value: " + mScale);
 //
@@ -446,7 +441,6 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 //                         (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
 //                         (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
 //                }
-
 
                 /*----------------------------修改预览旋转90度问题--------------------------------*/
                 canvas.rotate(90, 0, 0);
