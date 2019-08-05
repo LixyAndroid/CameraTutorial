@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import org.opencv.BuildConfig;
 import org.opencv.R;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -414,6 +416,11 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
                 bmpValid = false;
 
+//                if (mCacheBitmap != null){
+//                    mCacheBitmap.recycle();
+//                    mCacheBitmap =Bitmap.createBitmap(modified.width(),modified.height(),Bitmap.Config.ARGB_8888);
+//                }
+
 
             }
         }
@@ -449,11 +456,18 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 canvas.rotate(90, 0, 0);
                 float scale = canvas.getWidth() / (float) mCacheBitmap.getHeight();
                 float scale2 = canvas.getHeight() / (float) mCacheBitmap.getWidth();
-                if (scale2 > scale) {
+
+                if (scale2 >= scale) {
                     scale = scale2;
                 }
                 if (scale != 0) {
                     canvas.scale(scale, scale, 0, 0);
+                } else {
+                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
+                            new Rect((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2,
+                                    (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
                 }
 
                 canvas.drawBitmap(mCacheBitmap, 0, -mCacheBitmap.getHeight(), null);
