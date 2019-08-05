@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,7 +16,11 @@ import android.widget.RadioButton;
 
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCamera2View;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import static org.opencv.android.CameraBridgeViewBase.CAMERA_ID_FRONT;
 
@@ -23,6 +29,40 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private JavaCamera2View mCamera2View;
 
     private int cameraIndex = 0;
+
+    int option = 0;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.camrea_view_menus, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // return super.onOptionsItemSelected(item);
+
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.invert:
+                option = 1;
+                break;
+            case R.id.edge:
+                option = 2;
+                break;
+            case R.id.sobel:
+                option = 3;
+                break;
+            case R.id.boxblur:
+                option = 4;
+                break;
+            default:
+                option = 0;
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -74,7 +114,51 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return inputFrame.rgba();
+        Mat frame = inputFrame.rgba();
+
+        process(frame);
+
+        return frame;
+    }
+
+    private void process(Mat frame) {
+        if (option == 1) {
+            //反色
+            Core.bitwise_not(frame, frame);
+        } else if (option == 2) {
+            Mat edges = new Mat();
+            //边缘,Canny算法
+            Imgproc.Canny(frame, edges, 100, 200, 3, false);
+            Mat result = Mat.zeros(frame.size(), frame.type());
+            frame.copyTo(result, edges);
+            result.copyTo(frame);
+
+            //释放资源
+            edges.release();
+            result.release();
+
+        } else if (option == 3) {
+            //梯度
+            Mat gradx = new Mat();
+            Imgproc.Sobel(frame, gradx, CvType.CV_32F, 1, 0);
+            Core.convertScaleAbs(gradx, gradx);
+            gradx.copyTo(frame);
+            //释放资源
+            gradx.release();
+
+        } else if (option == 4) {
+
+            //模糊
+            Mat temp = new Mat();
+            Imgproc.blur(frame, temp, new Size(15, 15));
+            temp.copyTo(frame);
+            //不要忘记释放资源
+            temp.release();
+
+        } else {
+            //do nothing
+        }
+
     }
 
     @Override
