@@ -1,12 +1,5 @@
 package org.opencv.android;
 
-import java.util.List;
-
-import org.opencv.BuildConfig;
-import org.opencv.R;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,11 +7,16 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import org.opencv.R;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+
+import java.util.List;
 
 /**
  * This is a basic class, implementing the interaction with Camera and OpenCV library.
@@ -416,10 +414,6 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
                 bmpValid = false;
 
-//                if (mCacheBitmap != null){
-//                    mCacheBitmap.recycle();
-//                    mCacheBitmap = Bitmap.createBitmap(modified.width(),modified.height(),Bitmap.Config.ARGB_8888);
-//                }
 
             }
         }
@@ -451,7 +445,6 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 //                }
 //                getHolder().unlockCanvasAndPost(canvas);
 
-
                 /*----------------------------修改预览旋转90度问题--------------------------------*/
                 canvas.rotate(90, 0, 0);
                 float scale = canvas.getWidth() / (float) mCacheBitmap.getHeight();
@@ -462,6 +455,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 if (scale != 0) {
                     canvas.scale(scale, scale, 0, 0);
                 }
+
                 canvas.drawBitmap(mCacheBitmap, 0, -mCacheBitmap.getHeight(), null);
 
                 /*----------------------------修改预览旋转90度问题--------------------------------*/

@@ -34,7 +34,7 @@
             android:text="后置摄像头" />
     </RadioGroup>
 
-    <org.opencv.android.JavaCameraView
+    <org.opencv.android.JavaCamera2View
         android:id="@+id/cv_camera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
